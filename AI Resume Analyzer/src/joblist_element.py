@@ -1,20 +1,20 @@
 class JobListElement:
-     def __init__():
+     def __init__(self, ):
 
         return 0
      
-     def httpUrl():
-
-        return 0
+     def httpUrl(self):
+        return self.url
      
-     def requirements():
-
-        return 0
+     def requirements(self):
+        return self.requirements
      
-     def tags():
-         
-        return 0
-     
-     def exit():
+     def tags(self):
+        return self.tags
 
-        exit(0)
+     def showInfo(self):
+        print()
+        print()
+        print()
+        print()
+        print()
