@@ -1,3 +1,6 @@
+import nltk
+nltk.download('stopwords')
+
 class JobListElement:
      def __init__(self,title,url, requirements,tags ):
         self.title = title

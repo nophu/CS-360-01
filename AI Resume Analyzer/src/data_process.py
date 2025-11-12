@@ -1,5 +1,5 @@
 class DataProcess:
-    def __init__():
+    def __init__(self):
 
         return 0
 
