@@ -1,4 +1,4 @@
-class apiHandler:
+class api_Handler:
     def __init__(self):
         import http.client
         self.connection = http.client.HTTPSConnection("jsearch.p.rapidapi.com")
@@ -7,7 +7,7 @@ class apiHandler:
             'x-rapidapi-host': "jsearch.p.rapidapi.com"
         }
 
-    def getListings(self, query): # Gets all job listings for the provided query (first) parameter
+    def get_Listings(self, query): # Gets all job listings for the provided query (first) parameter
         import json
         from urllib.parse import quote
 
@@ -21,29 +21,29 @@ class apiHandler:
         data = json.loads(data)
 
         if not "data" in data:
-            return self.openFailSafe()
+            return self.open_FailSafe()
         else:
             return data["data"]
     
-    def openFailSafe(self): # In case the api dies, uses "fail_safe.txt" in the relative directory.
+    def open_FailSafe(self): # In case the api dies, uses "fail_safe.txt" in the relative directory.
         import json
         with open("fail_safe.txt", "r", encoding="utf-8") as f:
             data = json.load(f)
             return data["data"]
 
-    def openDirectLink(self, jobApplicationLink): # Opens a link directly
+    def open_DirectLink(self, jobApplicationLink): # Opens a link directly
         import webbrowser
         webbrowser.open(jobApplicationLink)
     
-    def openByJSON(self, jobListingsJSON, jobIndex): # Opens a related link from getListings response and job index
+    def open_ByJSON(self, jobListingsJSON, jobIndex): # Opens a related link from getListings response and job index
         import webbrowser
         webbrowser.open(jobListingsJSON[jobIndex]["job_apply_link"])
 
 '''
 # EXAMPLE PROGRAM
-api = apiHandler()
+api = api_Handler()
 
-response = api.getListings("developer jobs in chicago")
+response = api.get_Listings("developer jobs in chicago")
 
 api.openDirectLink(response[1]["job_apply_link"])
 '''
