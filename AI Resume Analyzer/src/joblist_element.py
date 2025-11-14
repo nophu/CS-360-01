@@ -1,12 +1,13 @@
 class JobListElement:
 
-     def __init__(self, title, url, company, description, requirements = None, tags = None ):
+     def __init__(self, title, url, company, description, requirements = None, tags = None, rawDictionary = None):
         self.title = title
         self.url = url
         self.company = company
         self.description = description
         self.requirements = requirements if requirements else []
         self.tags = tags if tags else []
+        self.rawDictionary = rawDictionary if rawDictionary else {}
      
      def get_url(self):
          return self.url
