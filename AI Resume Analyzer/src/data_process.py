@@ -1,7 +1,7 @@
 import fileinput
 import json
 import joblist_element
-class DataProcess:
+class data_process:
 
 
     def __init__(self, file):

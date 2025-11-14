@@ -1,4 +1,4 @@
-class JobListElement:
+class job_list_element:
     # initialize basic job info
      def __init__(self, title, url, company, description, requirements = None, tags = None, rawDictionary = None):
 
