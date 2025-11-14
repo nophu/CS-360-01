@@ -10,7 +10,7 @@ class DataProcess:
         self.joblist = []
 
 
-    def parseResume(self):
+    def parse_resume(self):
 
         dict1 = {}
 
@@ -28,9 +28,10 @@ class DataProcess:
 
         return self.jfilename
 
-    def parseJson(self, apiFile):
+    def parse_json(self, apiFile):
         title = []                #these four lists are for storing elements for the four fields in joblist_element
         url = []
+        company = []
         requirments = []
         tags = []
         i = 0                     #used to iterate through title, requirments and tags
@@ -56,11 +57,11 @@ class DataProcess:
 
         return self.joblist
 
-    def matchScore():
-
+    def match_score():
+        
         return 0
 
-    def relevanceScore():
+    def relevance_score():
 
         return 0
 
