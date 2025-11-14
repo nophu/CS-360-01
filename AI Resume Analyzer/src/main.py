@@ -5,4 +5,4 @@ from api_handler import api_handler
 def main():
     ui = user_interface()
     dp = data_process()
-    api = API()
+    api = api_handler()

@@ -118,4 +118,4 @@ class user_interface:
 
 
 if __name__ == "__main__":
-    myGUI = UserInterface()
+    myGUI = user_interface()
