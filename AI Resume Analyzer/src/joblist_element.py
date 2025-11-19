@@ -16,16 +16,13 @@ class joblist_element:
         self.rawDictionary = rawDictionary if rawDictionary else {}
 
      # return job url
-     def get_url(self):
-         return self.url
+     def get_url(self): return self.url
 
      # return job requirement list
-     def get_requirements(self):
-         return self.requirements
+     def get_requirements(self): return self.requirements
 
      # return job tag list
-     def get_tags(self):
-         return self.tags
+     def get_tags(self): return self.tags
 
      # return job info as a dictionary
      def to_dict(self):
@@ -38,3 +35,4 @@ class joblist_element:
             "tags": self.tags,
         }
 
+    

@@ -110,8 +110,7 @@ class data_process:
         with open(self.jfilename, "r") as f:  #this bit gets the skills from the json file of the users resume
             data = json.load(f)
         for key, value in data:   
-            if key == "skills" :
-                skills.append(value)
+            if key == "skills" : skills.append(value)
 
         for item in requirments: #checks if each requirment is in the user's listed skills or not and adds to the two lists accordingly
             for element in skills:
@@ -122,10 +121,6 @@ class data_process:
             if found == False:
                 missing.append(item)
             found = False
-            
-        
         return matched, missing
     
-    def exit():
-
-        exit(0)
+    def exit(): exit(0)
