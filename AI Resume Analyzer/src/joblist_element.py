@@ -1,6 +1,10 @@
 class JobListElement:
+     """
+     Stores Information about job posting which includes title, company, URL, description, requirements, and tags.
+     """
+
     # initialize basic job info
-     def __init__(self, title, url, company, description, requirements = None, tags = None, rawDictionary = None):
+     def __init__(self, title: str, url: str, company: str, description: str, requirements = None, tags = None, raw_dictionary = None):
 
         # save job info
         self.title = title
@@ -9,30 +13,18 @@ class JobListElement:
         self.description = description
 
         # save lists
-        self.requirements = requirements if requirements else []
+        self.requirements = requirements or [] 
         self.tags = tags if tags else []
 
         # save raw data
-        self.rawDictionary = rawDictionary if rawDictionary else {}
+        self.raw_dictionary  = raw_dictionary  or {}
 
-     # return job url
-     def get_url(self): return self.url
-
-     # return job requirement list
-     def get_requirements(self): return self.requirements
-
-     # return job tag list
-     def get_tags(self): return self.tags
+     # return job requirement list and tags
+     def get(self, field): return getattr(self, field)
 
      # return job info as a dictionary
-     def to_dict(self):
-        return {
-            "title": self.title,
-            "url": self.url,
-            "company": self.company,
-            "description": self.description,
-            "requirements": self.requirements,
-            "tags": self.tags,
-        }
+     fields = ["title", "url", "company", "description", "requirements", "tags"] 
+     def to_dict(self): return {field: getattr(self, field) for field in self.fields}
 
-    
+    # f string for debugging unreadable objects 
+     def __repr__(self): return f"JobListElement(title={self.title}, company={self.company})"
