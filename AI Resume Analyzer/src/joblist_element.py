@@ -4,7 +4,7 @@ class JobListElement:
      """
 
     # initialize basic job info
-     def __init__(self, title: str, url: str, company: str, description: str, requirements = None, tags = None, raw_dictionary = None):
+     def __init__(self, title: str, url: str, company: str, description: str, requirements: list[str] | None = None, tags: list[str] | None = None, raw_dictionary: dict | None = None):
 
         # save job info
         self.title = title
