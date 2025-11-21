@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
-class UserInterface:
+class user_interface:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("AI Resume Reviewer")
@@ -189,7 +189,7 @@ class UserInterface:
         self.tooltip.wm_geometry(f"+{x}+{y}")
 
         tk.Label(self.tooltip, text=text, background="yellow", relief="solid", borderwidth=1).pack()
-        
+
     def populate_skill_list(self, frame, skills, hover=False):
         for skill in skills:
             label = tk.Label(frame, text=skill, font=("Arial", 11))
@@ -211,4 +211,4 @@ class UserInterface:
 
 
 if __name__ == "__main__":
-    myGUI = UserInterface()
+    myGUI = user_interface()
