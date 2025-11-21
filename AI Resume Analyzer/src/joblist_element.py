@@ -27,4 +27,4 @@ class JobListElement:
      def to_dict(self): return {field: getattr(self, field) for field in self.fields}
 
     # f string for debugging unreadable objects 
-     def __repr__(self): return f"JobListElement(title={self.title}, company={self.company})"
+     def __repr__(self): return f"JobListElement(title = {self.title}, company = {self.company})"
