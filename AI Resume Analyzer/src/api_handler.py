@@ -20,10 +20,8 @@ class api_handler:
         data = data.decode("utf-8")
         data = json.loads(data)
 
-        if not "data" in data:
-            return self.open_FailSafe()
-        else:
-            return data["data"]
+        if not "data" in data: return self.open_FailSafe()
+        else: return data["data"]
     
     def open_failSafe(self): # In case the api dies, uses "fail_safe.txt" in the relative directory.
         import json

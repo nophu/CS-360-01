@@ -151,6 +151,3 @@ class data_process:
             found = False
         
         return matched, missing
-    
-    def exit():
-        exit(0)
