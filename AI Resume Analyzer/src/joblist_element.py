@@ -1,4 +1,4 @@
-class JobListElement:
+class joblist_element:
      """
      Stores Information about job posting which includes title, company, URL, description, requirements, and tags.
      """
