@@ -1,7 +1,7 @@
 import json, os, PyPDF2
-import joblist_element
+import joblistelement
 from docx import Document
-class data_process:
+class DataProcess:
 
 
     def __init__(self, file):
@@ -64,7 +64,7 @@ class data_process:
     def parse_json(self, file):
         with open(file, "r") as f: return json.load(f)
 
-    def parse_Job_List(self, data):
+    def parse_job_list(self, data):
         joblist = []
 
         for _, job in data:

@@ -1,15 +1,16 @@
 import json, webbrowser, http.client
 from urllib.parse import quote
-class api_handler:
+class APIHandler:
 
     def __init__(self):
         self.connection = http.client.HTTPSConnection("jsearch.p.rapidapi.com")
         self.headers = { 'x-rapidapi-key': "ef33a65e16msh5f5ae3dc94c29c2p1d65a3jsn4f04ffc646e9", 'x-rapidapi-host': "jsearch.p.rapidapi.com" }
 
-    def get_listings(self, query): # Gets all job listings for the provided query (first) parameter
+    # Gets all job listings for the provided query (first) parameter
+    def get_listings(self, query):
         query = quote(query)
-        searchUrl = "/search?" + query + "&page=1&num_pages=1&country=us&date_posted=all"
-        self.connection.request("GET", searchUrl, headers = self.headers)
+        search_url = "/search?" + query + "&page=1&num_pages=1&country=us&date_posted=all"
+        self.connection.request("GET", search_url, headers = self.headers)
         response = self.connection.getresponse()
 
         data = response.read()
@@ -18,17 +19,20 @@ class api_handler:
 
         if not "data" in data: return self.open_FailSafe()
         else: return data["data"]
-    
-    def open_failSafe(self): # In case the api dies, uses "fail_safe.txt" in the relative directory.
+
+    # In case the api dies, uses "fail_safe.txt" in the relative directory.
+    def open_failsafe(self):
         with open("fail_safe.txt", "r", encoding="utf-8") as f:
             data = json.load(f)
             return data["data"]
 
     # Opens a link directly
-    def open_directLink(self, jobApplicationLink): webbrowser.open(jobApplicationLink)
+    def open_directlink(self, jobApplicationLink): webbrowser.open(jobApplicationLink)
 
     # Opens a related link from getListings response and job index
-    def open_JSON(self, jobListingsJSON, jobIndex): webbrowser.open(jobListingsJSON[jobIndex]["job_apply_link"])
+    def open_json(self, jobListingsJSON, jobIndex): webbrowser.open(jobListingsJSON[jobIndex]["job_apply_link"])
+
+
 
 '''
 # EXAMPLE PROGRAM

@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
-class user_interface:
+class UserInterface:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("AI Resume Reviewer")
@@ -148,4 +148,4 @@ class user_interface:
 
 
 if __name__ == "__main__":
-    myGUI = user_interface()
+    myGUI = UserInterface()

@@ -1,8 +1,8 @@
-from user_interface import user_interface
-from data_process import data_process
-from api_handler import api_handler
+from userinterface import UserInterface
+from dataprocess import DataProcess
+from apihandler import APIHandler
 
 def main():
-    ui = user_interface()
-    dp = data_process()
-    api = api_handler()
+    ui = UserInterface()
+    dp = DataProcess()
+    api = APIHandler()
