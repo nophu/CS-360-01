@@ -99,8 +99,7 @@ class data_process:
         data = self.parse_json(self, self.jfilename)  #this bit gets the data from the json file of the users resume
         
         for key, value in data:   #gets user skills
-            if key == "skills" or key == "Skills":
-                skills.append(value)
+            if key == "skills" or key == "Skills": skills.append(value)
 
         for item in requirements: #checks if each requirement is in the user's listed skills
             for element in skills:
