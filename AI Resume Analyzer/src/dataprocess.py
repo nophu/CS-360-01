@@ -12,7 +12,7 @@ class DataProcess:
     def create_joblist_element(self, title, url, company, description, requirements, tags): #new method for creating joblist_element
         self.joblist = []
         for i in range(len(url)):
-            temp = joblist_element( title[i], url[i], company[i], description[i], requirements[i], tags[i] )
+            temp = joblistelement( title[i], url[i], company[i], description[i], requirements[i], tags[i] )
             self.joblist.append(temp)
         return self.joblist
 
@@ -68,10 +68,7 @@ class DataProcess:
         joblist = []
 
         for _, job in data:
-            joblist.append(
-                joblist_element( job["job_title"], job["job_apply_link"], job["employer_name"],
-                    job["job_description"], job["job_highlights"]["Qualifications"], job["job_highlights"]["Responsibilities"] )
-            )
+            joblist.append( joblistelement( job["job_title"], job["job_apply_link"], job["employer_name"], job["job_description"], job["job_highlights"]["Qualifications"], job["job_highlights"]["Responsibilities"] ) )
         return joblist
 
 
