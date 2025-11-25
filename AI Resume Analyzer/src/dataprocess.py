@@ -2,8 +2,6 @@ import json, os, PyPDF2
 import joblistelement
 from docx import Document
 class DataProcess:
-
-
     def __init__(self, file):
         self.filename = file
         self.jfilename = ""
@@ -68,7 +66,10 @@ class DataProcess:
         joblist = []
 
         for _, job in data:
-            joblist.append( joblistelement( job["job_title"], job["job_apply_link"], job["employer_name"], job["job_description"], job["job_highlights"]["Qualifications"], job["job_highlights"]["Responsibilities"] ) )
+            joblist.append(
+                joblistelement( job["job_title"], job["job_apply_link"], job["employer_name"],
+                    job["job_description"], job["job_highlights"]["Qualifications"], job["job_highlights"]["Responsibilities"] )
+            )
         return joblist
 
 
