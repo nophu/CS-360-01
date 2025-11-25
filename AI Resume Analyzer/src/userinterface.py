@@ -154,7 +154,3 @@ class UserInterface:
     def show_job_header(self, idx):
         tk.Label(self.root, text=f"Job Link: https://example.com/job/{idx+1}", fg="blue", cursor="hand2").pack(pady=5)
         tk.Label(self.root, text=f"Job Description for Position #{idx+1}", font=("Arial", 12), wraplength=500).pack(pady=10)
-
-
-if __name__ == "__main__":
-    myGUI = UserInterface()
