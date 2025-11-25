@@ -7,11 +7,18 @@ class DataProcess:
         self.jfilename = ""
         self.joblist = []
 
-    def create_joblist_element(self, title, url, company, description, requirements, tags): #new method for creating joblist_element
+    def create_joblist_element(self, title, url, company, description, requirements, tags):
+        # empty list
         self.joblist = []
+
+        # create JobListElement objects
         for i in range(len(url)):
             temp = joblistelement( title[i], url[i], company[i], description[i], requirements[i], tags[i] )
+
+            # add JobListElement to list
             self.joblist.append(temp)
+
+        # return list of JobListElement objects
         return self.joblist
 
     def parse_resume(self, output_file = "resume.json"):
@@ -60,16 +67,21 @@ class DataProcess:
         return words
     
     def parse_json(self, file):
+        # open json file, read content and then return as dictionary
         with open(file, "r") as f: return json.load(f)
 
     def parse_job_list(self, data):
+        # empty list
         joblist = []
 
+        # create job list element using data from dictionary
         for _, job in data:
             joblist.append(
                 joblistelement( job["job_title"], job["job_apply_link"], job["employer_name"],
                     job["job_description"], job["job_highlights"]["Qualifications"], job["job_highlights"]["Responsibilities"] )
             )
+
+        # return list of joblist elements
         return joblist
 
 
