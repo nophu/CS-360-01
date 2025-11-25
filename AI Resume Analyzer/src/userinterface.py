@@ -2,11 +2,15 @@ import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
 from dataprocess import DataProcess
 class UserInterface:
-    def __init__(self):
+    def __init__(self, api):
         self.root = tk.Tk()
-        self.root.title("AI Resume Reviewer")
+        self.root.title("AI Resume Analyzer")
         self.root.geometry("700x500")
+
         self.filename = None
+        self.dp = None
+        self.api = api
+        self.jobList = []
 
         self.create_upload_screen()
         self.root.mainloop()
@@ -15,7 +19,7 @@ class UserInterface:
 
     def create_upload_screen(self):
         self.clear_screen()
-        self.make_label(self.root, "AI Resume Reviewer", 24, pady=20)
+        self.make_label(self.root, "AI Resume Analyzer", 24, pady=20)
         self.make_label(self.root, "Drop Resume Here or Click Upload", 16)
 
         upload_btn = tk.Button(self.root, text="Upload Resume", font=("Arial", 14), command=self.upload_resume)
@@ -32,6 +36,12 @@ class UserInterface:
         file_path = filedialog.askopenfilename(title="Select Resume", filetypes=[("All Files", "*.*")])
         if file_path:
             self.filename = file_path
+
+            dp = DataProcess(self.filename)
+            dp.parse_resume("resume.json")
+            dp.jfilename = "resume.json"
+            self.dp = dp
+
             self.status_label.config(text="Processing resume...")
             self.simulate_loading()
     
