@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
+from dataprocess import DataProcess
 class UserInterface:
     def __init__(self):
         self.root = tk.Tk()
@@ -28,7 +29,7 @@ class UserInterface:
         self.status_label.pack(pady=10)
     
     def upload_resume(self):
-        file_path = filedialog.askopenfilename(title="Select Resume", filetypes=[("PDF Files", "*.pdf"), ("All Files", "*.*")])
+        file_path = filedialog.askopenfilename(title="Select Resume", filetypes=[("All Files", "*.*")])
         if file_path:
             self.filename = file_path
             self.status_label.config(text="Processing resume...")
@@ -143,8 +144,6 @@ class UserInterface:
     def show_job_header(self, idx):
         tk.Label(self.root, text=f"Job Link: https://example.com/job/{idx+1}", fg="blue", cursor="hand2").pack(pady=5)
         tk.Label(self.root, text=f"Job Description for Position #{idx+1}", font=("Arial", 12), wraplength=500).pack(pady=10)
-
-
 
 
 if __name__ == "__main__":
