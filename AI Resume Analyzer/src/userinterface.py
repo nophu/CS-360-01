@@ -38,36 +38,40 @@ class UserInterface:
         self.status_label.pack(pady=10)
     
     def upload_resume(self):
-
         # Step 1, user uploads resume
 
-        self.status_label.config(text="Requesting Resume...")
+        self.status_label.config(text="Uploading Resume")
         self.progress.step(33)
         file_path = filedialog.askopenfilename(title="Select Resume", filetypes=[("All Files", "*.*")])
         if not file_path: return
 
-        processor = DataProcess(file_path)
-
-        result = processor.parse_headers(processor.parse_text())
-        print(result)
-        processor.jfilename = "resume.json"
-
-        self.dp = processor
 
         # Step 2, dataprocess processes resume
         self.progress.step(33)
         self.status_label.config(text="Processing Resume")
 
+        processor = DataProcess(file_path)
+        self.dp = processor
 
+        processResults = processor.parse_headers(processor.parse_text())
+
+        skills = processResults["skills"]
+        if not skills:
+            skills = []
+            for k, category in processResults.items():
+                for i in category:
+                    skills.append(i)
+
+        processor.jfilename = "resume.json"
 
         # Step 3, get listings
         self.progress.step(33)
         self.status_label.config(text="Getting listings from API")
 
-        #results = self.api.get_listings("")
+        apiResults = self.api.get_listings(skills, amount=1)
 
-        self.root.after(30000, self.show_job_listings)
-        #self.show_job_listings()
+        self.jobList = apiResults
+        self.show_job_listings()
 
 #SCREEN 2 ===================================================
 
@@ -83,14 +87,17 @@ class UserInterface:
 
         tk.Label(frame, text="", width=10).grid(row=0, column=2)
 
-        # Dummy listings
-        for i in range(10): self.add_job_row(frame, i)
+        c = 0 # UISCROLL PLS AND TY
+        for i in self.jobList:
+            self.add_job_row(frame, i, c)
+            c += 1
         self.create_nav_buttons(self.create_upload_screen)
 
     #SCREEN 3 ===================================================
-    def show_job_details(self, idx):
+    def show_job_details(self, idx): # UISCROLL PLS AND TY
+        jobListing = self.jobList[idx]
         self.clear_screen()
-        tk.Label(self.root, text="JOB POSITION", font=("Arial", 22)).pack(pady=10)
+        tk.Label(self.root, text= jobListing["job_title"] + " at " + jobListing["employer_name"], font=("Arial", 22)).pack(pady=10)
         self.show_job_header(idx)
 
         content_frame = tk.Frame(self.root)
@@ -135,8 +142,8 @@ class UserInterface:
         label.pack(pady=pady)
         return label
 
-    def add_job_row(self, frame, i):
-        job_label = tk.Label(frame, text=f"Job Position #{i+1}", font=("Arial", 12), anchor="w")
+    def add_job_row(self, frame, jobListing, i):
+        job_label = tk.Label(frame, text= jobListing["job_title"] + " at " + jobListing["employer_name"], font=("Arial", 12), anchor="w")
         match_label = tk.Label(frame, text=f"{80 - i*3}%", font=("Arial", 12))
         more_btn = tk.Button(frame, text="+", command=lambda idx=i: self.show_job_details(idx))
 
@@ -170,6 +177,6 @@ class UserInterface:
         for i in range(101): self.root.after(i * 30, lambda v=i: self.progress.step(1))
         self.root.after(3200, callback)  #After progress, call the callback
 
-    def show_job_header(self, idx):
-        tk.Label(self.root, text=f"Job Link: https://example.com/job/{idx+1}", fg="blue", cursor="hand2").pack(pady=5)
-        tk.Label(self.root, text=f"Job Description for Position #{idx+1}", font=("Arial", 12), wraplength=500).pack(pady=10)
+    def show_job_header(self, idx): # UISCROLL PLS AND TY
+        tk.Label(self.root, text=f"Job Link: {self.jobList[idx]["job_apply_link"]}", fg="blue", cursor="hand2").pack(pady=5)
+        tk.Label(self.root, text=self.jobList[idx]["job_description"], font=("Arial", 12), wraplength=500).pack(pady=10)
