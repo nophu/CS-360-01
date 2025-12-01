@@ -21,51 +21,49 @@ class DataProcess:
         # return list of JobListElement objects
         return self.joblist
 
-    def parse_resume(self, output_file = "resume.json"):
-        # get file extension of resume file and convert to lowercase
+    def parse_text(self):
         ext = os.path.splitext(self.filename)[1].lower()
 
-        # create empty string
-        text = ""
-
-        # check if file is a docx 
-        if ext == ".docx": 
+        if ext == ".docx":
             doc = Document(self.filename)
+            return "\n".join(p.text for p in doc.paragraphs)
 
-            # get all text from paragraphs and put them together
-            text = " ".join(p.text for p in doc.paragraphs)
-            
-        # check if file is a pdf 
-        elif ext == ".pdf": 
-            if not PyPDF2: raise ImportError("PyPDF2 is required for PDFs!")
-
-            # read pdf file 
+        elif ext == ".pdf":
             reader = PyPDF2.PdfReader(self.filename)
+            return "\n".join(page.extractText() for page in reader.pages)
 
-            # get all text from all pages and put them together
-            text = " ".join(page.extract_text() for page in reader.pages) 
+        else: raise ValueError("Unsupported file type")
 
-        # if file is not of supported file type
-        else: raise ValueError("Unsupported file type!")
+    def parse_headers(self, text):
+        section_headers = {
+            "skills": ["skills", "technical skills", "skills & abilities"],
+            "experience": ["experience", "work experience", "professional experience"],
+            "education": ["education"],
+            "certifications": ["certifications", "certificates"],
+            "summary": ["summary", "professional summary", "objective"]
+        }
 
-        # create dictionary to hold words 
-        words = {}
+        extracted = {key: "" for key in section_headers}
+        current_section = None
 
-        # loop for each word in text
-        for word in text.split():
+        lines = text.split("\n")
 
-            # make the word lowercase and get rid of extra spaces
-            word = word.lower().strip()
+        for line in lines: clean = line.strip().lower()
 
-            # count each word
-            if word: words[word] = words.get(word, 0) + 1
-            
-        # save the word counts to json file 
-        with open(output_file, "w", encoding = "utf-8") as f: json.dump(words, f, indent = 4)
+        for section, keywords in section_headers.items():
+            if any(k in clean.lower() for k in keywords):
+                current_section = section
+                break
 
-        # return dictionary of the count
-        return words
-    
+            else:
+                if current_section: extracted[current_section] += line.strip() + "\n"
+
+        if extracted["skills"]: extracted["skills"] = [s.strip() for s in extracted["skills"].replace(",", "\n") if s.strip()]
+        else: extracted["skills"] = []
+
+        return extracted
+
+
     def parse_json(self, file):
         # open json file, read content and then return as dictionary
         with open(file, "r") as f: return json.load(f)
@@ -142,7 +140,6 @@ class DataProcess:
 
         #return relevance percentage
         return (related_user_information / job_information) * 100
-
 
 
     def match(self, job):
