@@ -1,10 +1,10 @@
-import json, os, PyPDF2
+import json, os, PyPDF2, re
+import pdfplumber
 import joblistelement
 from docx import Document
 class DataProcess:
     def __init__(self, file):
         self.filename = file
-        self.jfilename = ""
         self.joblist = []
 
     def create_joblist_element(self, title, url, company, description, requirements, tags):
@@ -23,52 +23,101 @@ class DataProcess:
 
 
     def parse_text(self):
-        #
+        # get file extension
         ext = os.path.splitext(self.filename)[1].lower()
 
-
+        # check if file is a docx
         if ext == ".docx":
+
+            # load docx
             doc = Document(self.filename)
+
+            # return all raw text in each paragraph
             return "\n".join(p.text for p in doc.paragraphs)
 
+        # check if file is pdf
         elif ext == ".pdf":
-            reader = PyPDF2.PdfReader(self.filename)
-            return "\n".join(page.extractText() for page in reader.pages)
 
+            # empty string
+            text = ""
+
+            # open pdf
+            with pdfplumber.open(self.filename) as pdf:
+
+                # go thru each page
+                for page in pdf.pages:
+
+                    # extract data from page, if no data = empty string
+                    page_text = page.extract_text() or ""
+
+                    # add text from page to final text
+                    text += page_text + "\n"
+
+                # return full extracted text from pdf
+                return text
+
+        # if file format is neither pdf nor docx
         else: raise ValueError("Unsupported file type")
 
     def parse_headers(self, text):
-        section_headers = {
-            "skills": ["skills", "technical skills", "skills & abilities"],
-            "experience": ["experience", "work experience", "professional experience"],
-            "education": ["education"],
-            "certifications": ["certifications", "certificates"],
-            "summary": ["summary", "professional summary", "objective"]
+        # dictionary of section names
+        keywords = {
+        "skills": ["skills", "technical skills", "skills & abilities"],
+        "experience": ["experience", "work experience", "professional experience", "employment history"],
+        "education": ["education", "academic background"],
+        "certifications": ["certifications", "certificates", "licenses"],
+        "summary": ["summary", "professional summary", "objective", "profile"],
         }
 
-        extracted = {key: "" for key in section_headers}
-        current_section = None
+        # empty list
+        sections = {}
 
-        lines = text.split("\n")
+        # pointer for each section
+        current_header = None
 
-        for line in lines: clean = line.strip().lower()
+        # split text into lines and individually process them
+        for raw_text in text.split("\n"):
 
-        for section, keywords in section_headers.items():
-            if any(k in clean.lower() for k in keywords):
-                current_section = section
-                break
+            # remove leading/trailing white spaces
+            line = raw_text.strip()
 
-            else:
-                if current_section: extracted[current_section] += line.strip() + "\n"
+            # skip empty lines
+            if not line: continue
 
-        if extracted["skills"]: extracted["skills"] = [s.strip() for s in extracted["skills"].replace(",", "\n") if s.strip()]
-        else: extracted["skills"] = []
+            # normalize line, convert to lowercase, remove alphanumeric characters except spaces
+            lower_line = re.sub(r'[^a-z0-9 ]+', '', line.lower()).strip()
 
-        return extracted
+            # reset header
+            found = None
 
-    def parse_resume(self):
-        text = self.parse_text()
-        sections = self.parse_headers(text)
+            # check if line matches any known headers
+            for header, keywordlist in keywords.items():
+
+                # match check
+                if any(lower_line == k for k in keywordlist):
+                    found = header
+                    break
+
+                # match check for stuff like starts-with
+                if any(lower_line.startswith(k) for k in keywordlist):
+                    found = header
+                    break
+
+            # if header is found
+            if found:
+                current_header = found
+
+                # initialize section list (if it does not exist already)
+                if current_header not in sections:
+                    sections[current_header] = []
+
+                # skip to next line, header is not content
+                continue
+
+            # if in a section, add line to current section
+            if current_header: sections[current_header].append(line)
+
+        # return dictionary of sections of extracted lines
         return sections
 
     def parse_json(self, file):
