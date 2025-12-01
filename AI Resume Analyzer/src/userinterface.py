@@ -1,6 +1,11 @@
 import tkinter as tk
+from platform import processor
+from time import sleep
 from tkinter import filedialog, ttk, messagebox
 from dataprocess import DataProcess
+from apihandler import APIHandler
+from dataprocess import DataProcess
+
 class UserInterface:
     def __init__(self, api):
         self.root = tk.Tk()
@@ -9,7 +14,7 @@ class UserInterface:
 
         self.filename = None
         self.dp = None
-        self.api = api
+        self.api = APIHandler()
         self.jobList = []
 
         self.create_upload_screen()
@@ -33,22 +38,36 @@ class UserInterface:
         self.status_label.pack(pady=10)
     
     def upload_resume(self):
+
+        # Step 1, user uploads resume
+
+        self.status_label.config(text="Requesting Resume...")
+        self.progress.step(33)
         file_path = filedialog.askopenfilename(title="Select Resume", filetypes=[("All Files", "*.*")])
-        if file_path:
-            self.filename = file_path
+        if not file_path: return
 
-            dp = DataProcess(self.filename)
-            dp.parse_resume("resume.json")
-            dp.jfilename = "resume.json"
-            self.dp = dp
+        processor = DataProcess(file_path)
 
-            self.status_label.config(text="Processing resume...")
-            self.simulate_loading()
-    
-    def simulate_loading(self):
-        #Simulate loading with progress bar
-        self.animate_progress(self.show_job_listings)
+        result = processor.parse_headers(processor.parse_text())
+        print(result)
+        processor.jfilename = "resume.json"
 
+        self.dp = processor
+
+        # Step 2, dataprocess processes resume
+        self.progress.step(33)
+        self.status_label.config(text="Processing Resume")
+
+
+
+        # Step 3, get listings
+        self.progress.step(33)
+        self.status_label.config(text="Getting listings from API")
+
+        #results = self.api.get_listings("")
+
+        self.root.after(30000, self.show_job_listings)
+        #self.show_job_listings()
 
 #SCREEN 2 ===================================================
 
