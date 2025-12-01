@@ -13,7 +13,7 @@ class DataProcess:
 
         # create JobListElement objects
         for i in range(len(url)):
-            temp = joblistelement( title[i], url[i], company[i], description[i], requirements[i], tags[i] )
+            temp = joblistelement.JobListElement(title[i], url[i], company[i], description[i], requirements[i], tags[i])
 
             # add JobListElement to list
             self.joblist.append(temp)
@@ -77,7 +77,7 @@ class DataProcess:
         # create job list element using data from dictionary
         for _, job in data:
             joblist.append(
-                joblistelement( job["job_title"], job["job_apply_link"], job["employer_name"],
+                joblistelement.JobListElement( job["job_title"], job["job_apply_link"], job["employer_name"],
                     job["job_description"], job["job_highlights"]["Qualifications"], job["job_highlights"]["Responsibilities"] )
             )
 
