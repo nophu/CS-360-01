@@ -1,23 +1,39 @@
 import json, webbrowser, http.client
 from urllib.parse import quote
+from xml.etree.ElementTree import tostring
+
+
 class APIHandler:
     def __init__(self):
         self.connection = http.client.HTTPSConnection("jsearch.p.rapidapi.com")
         self.headers = { 'x-rapidapi-key': "ef33a65e16msh5f5ae3dc94c29c2p1d65a3jsn4f04ffc646e9", 'x-rapidapi-host': "jsearch.p.rapidapi.com" }
 
     # Gets all job listings for the provided query (first) parameter
-    def get_listings(self, query):
-        query = quote(query)
-        search_url = "/search?" + query + "&page=1&num_pages=1&country=us&date_posted=all"
-        self.connection.request("GET", search_url, headers = self.headers)
-        response = self.connection.getresponse()
+    def get_listings(self, query, amount = 1):
+        results = []
 
-        data = response.read()
-        data = data.decode("utf-8")
-        data = json.loads(data)
+        if amount > len(query): amount = len(query)
 
-        if not "data" in data: return self.open_failsafe()
-        else: return data["data"]
+        for i in range(amount):
+            thisQuery = quote(query[i].lower())
+            search_url = "/search?query=" + thisQuery + "&page=1&num_pages=1&country=us&date_posted=all"
+            self.connection.request("GET", search_url, headers = self.headers)
+            response = self.connection.getresponse()
+
+            data = response.read()
+            data = data.decode("utf-8")
+            data = json.loads(data)
+
+            if "data" in data:
+                for item in data["data"]:
+                    results.append(item)
+
+        if len(results) == 0:
+            if not "data" in data: return self.open_failsafe()
+            self.open_failsafe()
+
+        return results
+
 
     # In case the api dies, uses "fail_safe.txt" in the relative directory.
     def open_failsafe(self):
@@ -31,13 +47,17 @@ class APIHandler:
     # Opens a related link from getListings response and job index
     def open_json(self, jobListingsJSON, jobIndex): webbrowser.open(jobListingsJSON[jobIndex]["job_apply_link"])
 
-
-
 '''
+tempList = ["Python", "Java", "C++"]
+str = ""
+for i in tempList:
+    str += i + " "
+
 # EXAMPLE PROGRAM
-api = api_Handler()
+api = APIHandler()
 
-response = api.get_Listings("developer jobs in chicago")
-
+print(str)
+response = api.get_listings(str)
+print(response)
 api.open_directlink(response[1]["job_apply_link"])
 '''
