@@ -21,8 +21,11 @@ class DataProcess:
         # return list of JobListElement objects
         return self.joblist
 
+
     def parse_text(self):
+        #
         ext = os.path.splitext(self.filename)[1].lower()
+
 
         if ext == ".docx":
             doc = Document(self.filename)
@@ -63,6 +66,10 @@ class DataProcess:
 
         return extracted
 
+    def parse_resume(self):
+        text = self.parse_text()
+        sections = self.parse_headers(text)
+        return sections
 
     def parse_json(self, file):
         # open json file, read content and then return as dictionary
