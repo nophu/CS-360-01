@@ -16,7 +16,7 @@ class APIHandler:
         data = data.decode("utf-8")
         data = json.loads(data)
 
-        if not "data" in data: return self.open_FailSafe()
+        if not "data" in data: return self.open_failsafe()
         else: return data["data"]
 
     # In case the api dies, uses "fail_safe.txt" in the relative directory.
@@ -39,5 +39,5 @@ api = api_Handler()
 
 response = api.get_Listings("developer jobs in chicago")
 
-api.openDirectLink(response[1]["job_apply_link"])
+api.open_directlink(response[1]["job_apply_link"])
 '''
