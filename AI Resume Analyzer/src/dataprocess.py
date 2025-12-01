@@ -108,8 +108,7 @@ class DataProcess:
                 current_header = found
 
                 # initialize section list (if it does not exist already)
-                if current_header not in sections:
-                    sections[current_header] = []
+                if current_header not in sections: sections[current_header] = []
 
                 # skip to next line, header is not content
                 continue
