@@ -51,6 +51,6 @@ class test:
             # return dictionary of the count
             return words
     
-parse = test("Alden Hilton Resume.docx")
+parse = test("../Alden Hilton Resume.docx")
 word_counts = parse.parse_resume()
 print(word_counts)
