@@ -1,4 +1,5 @@
 import tkinter as tk
+import webbrowser
 from platform import processor
 from time import sleep
 from tkinter import filedialog, ttk, messagebox
@@ -178,5 +179,8 @@ class UserInterface:
         self.root.after(3200, callback)  #After progress, call the callback
 
     def show_job_header(self, idx): # UISCROLL PLS AND TY
-        tk.Label(self.root, text=f"Job Link: {self.jobList[idx]["job_apply_link"]}", fg="blue", cursor="hand2").pack(pady=5)
-        tk.Label(self.root, text=self.jobList[idx]["job_description"], font=("Arial", 12), wraplength=500).pack(pady=10)
+        link = self.jobList[idx]["job_apply_link"]
+        description = self.jobList[idx]["job_description"]
+        link_label = tk.Label(self.root, text=f"Job Link: {link}", fg="blue", cursor="hand2").pack(pady=5)
+        link_label.bind("<Button-1>", lambda e: webbrowser.open(link))
+        tk.Label(self.root, text=description, font=("Arial", 12), wraplength=500).pack(pady=10)
