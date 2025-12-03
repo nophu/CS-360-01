@@ -1,5 +1,4 @@
 import tkinter as tk
-import webbrowser
 from platform import processor
 from time import sleep
 from tkinter import filedialog, ttk, messagebox
@@ -37,7 +36,7 @@ class UserInterface:
 
         self.status_label = tk.Label(self.root, text="<Loading Status>", font=("Arial", 12))
         self.status_label.pack(pady=10)
-    
+
     def upload_resume(self):
         # Step 1, user uploads resume
 
@@ -55,8 +54,12 @@ class UserInterface:
         self.dp = processor
 
         processResults = processor.parse_headers(processor.parse_text())
+        print(processResults)
+        print(len(processResults))
 
         skills = processResults["skills"]
+        self.resume_skills = skills
+        print("SKILLS SENT TO API:", skills)
         if not skills:
             skills = []
             for k, category in processResults.items():
@@ -69,12 +72,9 @@ class UserInterface:
         self.progress.step(33)
         self.status_label.config(text="Getting listings from API")
 
-        #getting job listings from API
-        apiResults = self.api.get_listings(skills, amount=1)
+        api_results = self.api.get_listings(["python"], amount=1)
 
-        print("DEBUG skills:", skills)
-        print("DEBUG apiResults:", apiResults)
-        self.jobList = apiResults
+        self.jobList = api_results
         self.show_job_listings()
 
 #SCREEN 2 ===================================================
@@ -83,15 +83,16 @@ class UserInterface:
         self.clear_screen()
         tk.Label(self.root, text="Related Listings", font=("Arial", 22)).pack(pady=10)
 
-        frame = tk.Frame(self.root)
-        frame.pack(pady=20)
+        container = tk.Frame(self.root)
+        container.pack(fill="both", expand=True, pady=10)
+
+        frame = self.make_scrollable(container)
 
         self.make_header(frame, "Job Listing", 0, 0)
         self.make_header(frame, "Match %", 0, 1)
 
         tk.Label(frame, text="", width=10).grid(row=0, column=2)
 
-        print (self.jobList)
         c = 0 # UISCROLL PLS AND TY
         for i in self.jobList:
             self.add_job_row(frame, i, c)
@@ -99,33 +100,39 @@ class UserInterface:
         self.create_nav_buttons(self.create_upload_screen)
 
     #SCREEN 3 ===================================================
-    def show_job_details(self, idx): # UISCROLL PLS AND TY
+    def show_job_details(self, idx):
         jobListing = self.jobList[idx]
         self.clear_screen()
-        tk.Label(self.root, text= jobListing["job_title"] + " at " + jobListing["employer_name"], font=("Arial", 22)).pack(pady=10)
-        self.show_job_header(idx)
 
-        content_frame = tk.Frame(self.root)
-        content_frame.pack(pady=10)
+        # title
+        tk.Label(self.root, text=jobListing["job_title"] + " at " + jobListing["employer_name"], font=("Arial", 22)).pack(pady=10)
 
-        # Matched and Missing lists
+        # scrollable table
+        container = tk.Frame(self.root)
+        container.pack(fill="both", expand=True)
+        content_frame = self.make_scrollable(container)
+
+        # job link
+        link = tk.Label( content_frame, text=f"Job Link: {jobListing['job_apply_link']}", fg="blue", cursor="hand2", font=("Arial", 12, "underline") )
+        link.pack(pady=5, anchor ="w")
+        link.bind("<Button-1>", lambda e, url=jobListing["job_apply_link"]: self.api.open_directlink(url))
+
+        # scrollable job description
+        tk.Label(content_frame, text=jobListing["job_description"], font=("Arial", 12), wraplength=550, justify="left").pack(pady=10, anchor="w")
+
+        # matched + missing skills frame
         matched_frame = tk.LabelFrame(content_frame, text="Matched", font=("Arial", 12))
-        matched_frame.grid(row=0, column=0, padx=20)
         missing_frame = tk.LabelFrame(content_frame, text="Missing", font=("Arial", 12))
-        missing_frame.grid(row=0, column=1, padx=20)
+        matched_frame.pack(padx=20, side="left", anchor="n")
+        missing_frame.pack(padx=20, side="left", anchor="n")
 
-        matched_skills, missing_skills = self.get_dummy_skills()
+        matched_skills, missing_skills = self.dp.match(jobListing)
         self.populate_skill_list(matched_frame, matched_skills)
-
-        for skill in missing_skills:
-            Label = tk.Label(missing_frame, text=skill, font=("Arial", 11))
-            Label.pack(anchor="w")
-            Label.bind("<Enter>", lambda e, s=skill: self.show_hover_tooltip(e, s))
-            Label.bind("<Leave>", self.hide_hover_tooltip)
+        self.populate_skill_list(missing_frame, missing_skills, hover=True)
 
         self.create_nav_buttons(self.show_job_listings)
 
-     # Tooltip simulation for hover
+    # Tooltip simulation for hover
     def show_hover_tooltip(self, event, skill_name): self.show_tooltip(event, f"Full Skill Name: {skill_name}")
 
     def hide_hover_tooltip(self, event):
@@ -149,14 +156,14 @@ class UserInterface:
 
     def add_job_row(self, frame, jobListing, i):
         job_label = tk.Label(frame, text= jobListing["job_title"] + " at " + jobListing["employer_name"], font=("Arial", 12), anchor="w")
-        match_label = tk.Label(frame, text=f"{80 - i*3}%", font=("Arial", 12))
+        relevance = self.dp.relevance_score(jobListing)
+        match_label = tk.Label(frame, text=f"{relevance:.0f}%", font=("Arial", 12))
         more_btn = tk.Button(frame, text="+", command=lambda idx=i: self.show_job_details(idx))
 
         job_label.grid(row=i+1, column=0, sticky="w")
         match_label.grid(row=i+1, column=1)
         more_btn.grid(row=i+1, column=2)
 
-    def get_dummy_skills(self): return ["Python", "Machine Learning", "Data Analysis"], ["Cloud Deployment", "CI/CD", "API Integration"]
 
     def show_tooltip(self, event, text):
         if hasattr(self, "tooltip"): self.tooltip.destroy()
@@ -170,8 +177,8 @@ class UserInterface:
 
     def populate_skill_list(self, frame, skills, hover=False):
         for skill in skills:
-            label = tk.Label(frame, text=skill, font=("Arial", 11))
-            label.pack(anchor="w")
+            label = tk.Label(frame, text=skill, font=("Arial", 11), wraplength=200, justify="left", anchor="w")
+            label.pack(anchor="w", pady=2)
             if hover:
                 label.bind("<Enter>", lambda e, s=skill: self.show_hover_tooltip(e, s))
                 label.bind("<Leave>", self.hide_hover_tooltip)
@@ -183,8 +190,25 @@ class UserInterface:
         self.root.after(3200, callback)  #After progress, call the callback
 
     def show_job_header(self, idx): # UISCROLL PLS AND TY
-        #link = self.jobList[idx]["job_apply_link"]
-        description = self.jobList[idx]["job_description"]
-        #link_label = tk.Label(self.root, text=f"Job Link: {link}", fg="blue", cursor="hand2").pack(pady=5)
-        #link_label.bind("<Button-1>", lambda e: webbrowser.open(link))
-        tk.Label(self.root, text=description, font=("Arial", 12), wraplength=500).pack(pady=10)
+        tk.Label(self.root, text=f"Job Link: {self.jobList[idx]["job_apply_link"]}", fg="blue", cursor="hand2").pack(pady=5)
+        tk.Label(self.root, text=self.jobList[idx]["job_description"], font=("Arial", 12), wraplength=500).pack(pady=10)
+
+    def make_scrollable(self, parent):
+        canvas = tk.Canvas(parent)
+        scrollbar = tk.Scrollbar(parent, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        inner = tk.Frame(canvas)
+        canvas.create_window((0, 0), window=inner, anchor="nw")
+
+        inner.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+
+        def _on_mousewheel(event): canvas.yview_scroll(-1 if event.delta > 0 else 1, "units")
+
+        # bind mouse wheel to both the frame and canvas
+        inner.bind_all("<MouseWheel>", _on_mousewheel)
+
+        return inner
