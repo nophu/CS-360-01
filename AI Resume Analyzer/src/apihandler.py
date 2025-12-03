@@ -1,3 +1,5 @@
+import os
+import json
 import json, webbrowser, http.client
 from urllib.parse import quote
 from xml.etree.ElementTree import tostring
@@ -27,7 +29,7 @@ class APIHandler:
             if "data" in data:
                 for item in data["data"]:
                     results.append(item)
-
+        print (results)
         if len(results) == 0:
             if not "data" in data: return self.open_failsafe()
             self.open_failsafe()
@@ -40,6 +42,23 @@ class APIHandler:
         with open("fail_safe.txt", "r", encoding="utf-8") as f:
             data = json.load(f)
             return data["data"]
+
+    '''
+    def open_failsafe(self):
+    # Locate file relative to THIS file, not the working directory
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        failsafe_path = os.path.join(base_path, "fail_safe.txt")
+
+        print("Loading failsafe from:", failsafe_path)
+
+        try:
+            with open(failsafe_path, "r", encoding="utf-8") as f:
+                text = f.read()
+            return json.loads(text)
+        except Exception as e:
+            print("Failed to load fail_safe.txt:", e)
+            return []
+'''
 
     # Opens a link directly
     def open_directlink(self, jobApplicationLink): webbrowser.open(jobApplicationLink)

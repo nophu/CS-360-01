@@ -69,8 +69,11 @@ class UserInterface:
         self.progress.step(33)
         self.status_label.config(text="Getting listings from API")
 
+        #getting job listings from API
         apiResults = self.api.get_listings(skills, amount=1)
 
+        print("DEBUG skills:", skills)
+        print("DEBUG apiResults:", apiResults)
         self.jobList = apiResults
         self.show_job_listings()
 
@@ -88,6 +91,7 @@ class UserInterface:
 
         tk.Label(frame, text="", width=10).grid(row=0, column=2)
 
+        print (self.jobList)
         c = 0 # UISCROLL PLS AND TY
         for i in self.jobList:
             self.add_job_row(frame, i, c)
@@ -179,8 +183,8 @@ class UserInterface:
         self.root.after(3200, callback)  #After progress, call the callback
 
     def show_job_header(self, idx): # UISCROLL PLS AND TY
-        link = self.jobList[idx]["job_apply_link"]
+        #link = self.jobList[idx]["job_apply_link"]
         description = self.jobList[idx]["job_description"]
-        link_label = tk.Label(self.root, text=f"Job Link: {link}", fg="blue", cursor="hand2").pack(pady=5)
-        link_label.bind("<Button-1>", lambda e: webbrowser.open(link))
+        #link_label = tk.Label(self.root, text=f"Job Link: {link}", fg="blue", cursor="hand2").pack(pady=5)
+        #link_label.bind("<Button-1>", lambda e: webbrowser.open(link))
         tk.Label(self.root, text=description, font=("Arial", 12), wraplength=500).pack(pady=10)
