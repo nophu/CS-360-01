@@ -1,3 +1,4 @@
+import json
 import tkinter as tk
 from platform import processor
 from time import sleep
@@ -54,6 +55,7 @@ class UserInterface:
         self.dp = processor
 
         processResults = processor.parse_headers(processor.parse_text())
+
         print(processResults)
         print(len(processResults))
 
@@ -65,6 +67,9 @@ class UserInterface:
             for k, category in processResults.items():
                 for i in category:
                     skills.append(i)
+
+        resume_data = { "skills": skills, "sections": processResults }
+        with open("resume.json", "w", encoding="utf-8") as f: json.dump(resume_data, f, indent=4)
 
         processor.jfilename = "resume.json"
 
