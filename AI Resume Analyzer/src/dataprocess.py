@@ -18,7 +18,7 @@ class DataProcess:
             doc = Document(self.filename)
 
             # return all raw text in each paragraph
-            return "\n".join(p.text for p in doc.paragraphs)
+            return "\n".join(str(p.text) for p in doc.paragraphs)
 
         # check if file is pdf
         elif ext == ".pdf":
@@ -68,6 +68,8 @@ class DataProcess:
 
             # skip empty lines
             if not line: continue
+
+            line = str(line)
 
             # normalize line, convert to lowercase, remove alphanumeric characters except spaces
             lower_line = re.sub(r'[^a-z0-9 ]+', '', line.lower()).strip()
@@ -134,7 +136,7 @@ class DataProcess:
         if not job_skills: return 0
 
         # normalize job skills to lowercase
-        job_skills_lower = [str(s).lower() for s in job_skills]
+        job_skills_lower = [str(s).lower().strip() for s in job_skills]
 
         # count how many job skills match any user skill
         matched = sum(1 for s in job_skills_lower if any(us in s for us in user_skills))
@@ -146,7 +148,11 @@ class DataProcess:
     def match(self, job):
         # get job requirements
         requirements = job.get("job_highlights", {}).get("Qualifications", [])
-        if not isinstance(requirements, str): requirements = [requirements]
+
+        # normalize requirements into list of strings
+        if isinstance(requirements, list): requirements = [str(r).strip() for r in requirements]
+        elif isinstance(requirements, str): requirements = [requirements]
+        else: requirements = [str(requirements)]
 
         # get user's skills
         skills = self.get_user_skills()
@@ -179,7 +185,7 @@ class DataProcess:
         safe_skills = []
         for s in skills:
             try: safe_skills.append(str(s).lower())
-            except Exception: continue
+            except: continue
 
         # return user skills
         return safe_skills
