@@ -77,7 +77,7 @@ class UserInterface:
         self.progress.step(33)
         self.status_label.config(text="Getting listings from API")
 
-        api_results = self.api.get_listings(["python"], amount=1)
+        api_results = self.api.get_listings(skills, amount=1)
 
         self.jobList = api_results
         self.show_job_listings()
@@ -110,7 +110,7 @@ class UserInterface:
         self.clear_screen()
 
         # title
-        tk.Label(self.root, text=jobListing["job_title"] + " at " + jobListing["employer_name"], font=("Arial", 22)).pack(pady=10)
+        tk.Label(self.root, text=jobListing["job_title"] + " at " + jobListing["employer_name"], font=("Arial", 22), wraplength=650, justify="center").pack(pady=10)
 
         # scrollable table
         container = tk.Frame(self.root)
@@ -118,12 +118,12 @@ class UserInterface:
         content_frame = self.make_scrollable(container)
 
         # job link
-        link = tk.Label( content_frame, text=f"Job Link: {jobListing['job_apply_link']}", fg="blue", cursor="hand2", font=("Arial", 12, "underline") )
+        link = tk.Label( content_frame, text=f"{jobListing['job_apply_link']}", fg="blue", cursor="hand2", font=("Arial", 12, "underline"), wraplength=650, justify="center")
         link.pack(pady=5, anchor ="w")
         link.bind("<Button-1>", lambda e, url=jobListing["job_apply_link"]: self.api.open_directlink(url))
 
         # scrollable job description
-        tk.Label(content_frame, text=jobListing["job_description"], font=("Arial", 12), wraplength=550, justify="left").pack(pady=10, anchor="w")
+        tk.Label(content_frame, text=jobListing["job_description"], font=("Arial", 12), wraplength=650, justify="left").pack(pady=10, anchor="w")
 
         # matched + missing skills frame
         matched_frame = tk.LabelFrame(content_frame, text="Matched", font=("Arial", 12))
@@ -160,7 +160,7 @@ class UserInterface:
         return label
 
     def add_job_row(self, frame, jobListing, i):
-        job_label = tk.Label(frame, text= jobListing["job_title"] + " at " + jobListing["employer_name"], font=("Arial", 12), anchor="w")
+        job_label = tk.Label(frame, text= jobListing["job_title"] + " at " + jobListing["employer_name"], font=("Arial", 12), anchor="w", width=50, wraplength=650, justify="left")
         relevance = self.dp.relevance_score(jobListing)
         match_label = tk.Label(frame, text=f"{relevance:.0f}%", font=("Arial", 12))
         more_btn = tk.Button(frame, text="+", command=lambda idx=i: self.show_job_details(idx))
