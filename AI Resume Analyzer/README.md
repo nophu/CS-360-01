@@ -35,8 +35,8 @@ Running the Application:
 
 Usage
 
-  -Launch the application
-  -Click Upload Resume
+    Launch the application
+    Click Upload Resume
   -Allow the system to parse and analyze
   -View job matches with scores
   -Expand details with the “+” button
@@ -55,4 +55,5 @@ Authors
   Nolan Phuong
   Alden Hilton
   Dawson Novotny
+
 
