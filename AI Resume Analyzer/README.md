@@ -30,17 +30,17 @@ Setup:
 
 Running the Application:
 
-  *bash*
-  python Main.py
+  -*bash*
+  -python Main.py
 
 Usage
 
-  Launch the application
-  Click Upload Resume
-  Allow the system to parse and analyze
-  View job matches with scores
-  Expand details with the “+” button
-  Use Apply links to visit postings online
+  -Launch the application
+  -Click Upload Resume
+  -Allow the system to parse and analyze
+  -View job matches with scores
+  -Expand details with the “+” button
+  -Use Apply links to visit postings online
 
 Future Improvements
 
@@ -55,3 +55,4 @@ Authors
   Nolan Phuong
   Alden Hilton
   Dawson Novotny
+
