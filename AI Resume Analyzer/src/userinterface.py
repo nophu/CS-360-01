@@ -6,7 +6,6 @@ from tkinter import filedialog, ttk, messagebox
 from dataprocess import DataProcess
 from apihandler import APIHandler
 from dataprocess import DataProcess
-import sys
 
 class UserInterface:
     def __init__(self, api):
@@ -22,7 +21,6 @@ class UserInterface:
         self.create_upload_screen()
         self.root.mainloop()
 
-    def uprint(*args, **kwargs): sys.stdout.buffer.write((" ".join(str(a) for a in args) + "\n").encode("utf-8"))
 #SCREEN 1 ===================================================
 
     def create_upload_screen(self):
