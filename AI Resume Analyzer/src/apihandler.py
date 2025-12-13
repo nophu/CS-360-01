@@ -6,7 +6,7 @@ from xml.etree.ElementTree import tostring
 class APIHandler:
     def __init__(self):
         self.connection = http.client.HTTPSConnection("jsearch.p.rapidapi.com")
-        self.headers = { 'x-rapidapi-key': "ef33a65e16msh5f5ae3dc94c29c2p1d65a3jsn4f04ffc646e9", 'x-rapidapi-host': "jsearch.p.rapidapi.com" }
+        self.headers = { 'x-rapidapi-key': "1d7374a3ccmshefb27efce1e9c42p1ddec1jsn0bbb0f59f728", 'x-rapidapi-host': "jsearch.p.rapidapi.com" }
 
     # Gets all job listings for the provided query (first) parameter
     def get_listings(self, query, amount = 1):
